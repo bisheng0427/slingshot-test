@@ -6,6 +6,7 @@ import { join } from 'path';
 import * as typegoose from '@midwayjs/typegoose';
 import * as Typegoose from '@typegoose/typegoose';
 import * as ws from '@midwayjs/ws';
+import * as crossDomain from '@midwayjs/cross-domain';
 // import { DefaultErrorFilter } from './filter/default.filter';
 // import { NotFoundFilter } from './filter/notfound.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
@@ -16,6 +17,7 @@ import { ReportMiddleware } from './middleware/report.middleware';
     validate,
     typegoose,
     ws,
+    crossDomain,
     {
       component: info,
       enabledEnvironment: ['local'],

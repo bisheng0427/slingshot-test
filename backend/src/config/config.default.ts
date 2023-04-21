@@ -24,4 +24,7 @@ export default {
       },
     },
   },
+  cors: {
+    credentials: false,
+  },
 } as MidwayConfig;

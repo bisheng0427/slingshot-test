@@ -11,14 +11,16 @@ import {
   Switch,
   Route
 } from 'react-router-dom'
+import { WebsocketProvider } from '../../context/websocket.context.js'
 
 function App() {
 	return (
 		<Router>
+			<WebsocketProvider>
 			<main>
 				<Header />			
 				<Nav />
-
+				
 				<Switch>
 					<Route path="/miners">
 						<Miners />
@@ -32,6 +34,7 @@ function App() {
 				</Switch>
 			</main>
 			<aside />
+			</WebsocketProvider>
 		</Router>
 	);
 }

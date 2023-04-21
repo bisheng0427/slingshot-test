@@ -1,9 +1,11 @@
 import { WSController, OnWSMessage, Inject, OnWSDisConnection } from '@midwayjs/core';
 import { Context } from '@midwayjs/ws';
 import { MinerService } from '../service/miner.service';
+import { IMessage, IRes } from '../types/common.types'
+import { WS_ACTION } from '../types/common.enums'
 
 @WSController()
-export class HelloSocketController {
+export class MinerSocketController {
   @Inject()
   ctx: Context;
 
@@ -11,9 +13,31 @@ export class HelloSocketController {
   minerService: MinerService;
 
   @OnWSMessage('message')
-  async gotMessage(data) {
-    console.log('data', data);
-    return { success: 1 };
+  async gotMessage(data: Buffer) {
+    let res: IRes = { success: true }
+    try {
+      const message: IMessage = JSON.parse(Buffer.from(data).toString('utf-8'))
+
+      if (message.type !== 'miner') return
+      console.log('mienr message', message)
+
+      res = { ...res, ...message }
+      switch (message.action) {
+        case WS_ACTION.GET_LIST:
+          res.data = await this.minerService.getList()
+          break;
+        case WS_ACTION.GET_INFO:
+          res.data = await this.minerService.findOne(message.payload)
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      res.success = false
+      res.message = 'mienr message process failed'
+    }
+    return res
+
   }
 
   @OnWSDisConnection()

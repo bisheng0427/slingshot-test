@@ -36,13 +36,13 @@ class CreateMiner extends React.Component {
 
 	render() {
 		return <form>
-			<div class="field error">
+			<div className="field error">
 				<label for="name">Miner name</label>
 				<input type="text" id="name" placeholder="Miner name" />
 				<div className="message">This name is already taken</div>
 			</div>
 
-			<div class="field">
+			<div className="field">
 				<label for="planet">Planet</label>
 				<select placeholder="Select a planet" id="planet">
 					<option>Planet 1</option>
