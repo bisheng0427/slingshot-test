@@ -14,7 +14,7 @@ export default {
   mongoose: {
     dataSource: {
       default: {
-        uri: 'mongodb+srv://betabb:bs270017@cluster0.gft3bo1.mongodb.net/?retryWrites=true&w=majority',
+        uri: '',
         options: {
           useNewUrlParser: true,
           useUnifiedTopology: true,
