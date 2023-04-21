@@ -1,0 +1,13 @@
+{
+  "extends": ["./node_modules/mwts/"],
+  "rules": {
+    "no-console": 1,
+    "no-implicit-coercion": 1,
+    "@typescript-eslint/no-inferrable-types": ["off", "ignore-params"]
+    //    "@typescript-eslint/explicit-function-return-type": 1
+  },
+  "ignorePatterns": ["node_modules", "dist", "test", "jest.config.js", "typings"],
+  "env": {
+    "jest": true
+  }
+}
