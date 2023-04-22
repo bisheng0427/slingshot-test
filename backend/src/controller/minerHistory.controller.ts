@@ -22,7 +22,7 @@ export class MinerSocketController {
             res = { ...res, ...message }
             switch (message.action) {
                 case WS_ACTION.GET_LIST:
-                    res.data = await this.minerHistory.getList(message.payload)
+                    res.data = await this.minerHistory.getList(message.payload?.minerId)
                     console.log('got list', res.data)
                     break;
                 default:

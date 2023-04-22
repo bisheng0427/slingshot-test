@@ -8,7 +8,7 @@ export class MinerHistoryService {
     @InjectEntityModel(MinerHistory)
     minerModel: ReturnModelType<typeof MinerHistory>;
 
-    async create(params: MinerHistory) {
+    async create(params: Partial<MinerHistory>) {
         return await this.minerModel.create(params as MinerHistory);
     }
 
@@ -31,5 +31,9 @@ export class MinerHistoryService {
             },
             params
         );
+    }
+
+    async drop() {
+        return await this.minerModel.deleteMany()
     }
 }

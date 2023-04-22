@@ -25,6 +25,7 @@ export const WebsocketProvider = ({ children }) => {
     });
 
     socket.on("data", (data) => {
+      console.log('recieved data', data)
       setVal(data);
     })
 

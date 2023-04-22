@@ -9,6 +9,9 @@ export class Miner {
   public id: number;
 
   @prop()
+  public name: string;
+
+  @prop()
   public planetId: number;
 
   @prop()

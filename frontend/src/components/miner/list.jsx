@@ -27,11 +27,12 @@ const MinerList = () => {
 	}, [ready]);
 
 	useEffect(() => {
-		if (val) {
+		if (val && val.type === 'miner' && val.action === 'getList') {
 			setLoading(false)
-			if (val.type === 'miner' && val.action === 'getList') {
-				setList(val.data)
-			}
+			setList(val.data)
+		} else if (val && val.action === 'newSimData') {
+			setLoading(false)
+			setList(val.data.miners)
 		}
 	}, [val])
 
@@ -51,20 +52,35 @@ const MinerList = () => {
 			</thead>
 			<tbody>
 				{
-					list.map((miner, idx) => (
-						<tr key={`miner-${idx}`} onClick={() => {
-							setPopupVisible(true)
-							setSelectedMiner(miner.id)
-						}}>
-							<td>{miner.name}</td>
-							<td>Planet {miner.planetId}</td>
-							<td>{miner.carryCapacity}/120</td>
-							<td>{miner.travelSpeed}</td>
-							<td>{miner.miningSpeed}</td>
-							<td>{miner.position ? `${miner.position.x},${miner.position.y}` : 'not assigned'}</td>
-							<td>{miner.status}</td>
-						</tr>
-					))
+					list.map((miner, idx) => {
+						switch (miner.status) {
+							case 0:
+								miner.status = 'Idle'
+								break;
+							case 1:
+								miner.status = 'Travelling'
+								break;
+							case 2:
+								miner.status = 'Mining'
+								break;
+							case 3:
+								miner.status = 'Transfering minerals to planet'
+						}
+						return (
+							<tr key={`miner-${idx}`} onClick={() => {
+								setPopupVisible(true)
+								setSelectedMiner(miner.id)
+							}}>
+								<td>{miner.name}</td>
+								<td>Planet {miner.planetId}</td>
+								<td>{miner.carryCapacity}/120</td>
+								<td>{miner.travelSpeed}</td>
+								<td>{miner.miningSpeed}</td>
+								<td>{miner.position ? `${miner.position.x},${miner.position.y}` : 'not assigned'}</td>
+								<td>{miner.status}</td>
+							</tr>
+						)
+					})
 				}
 			</tbody>
 		</table>

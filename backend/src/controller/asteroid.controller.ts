@@ -3,6 +3,7 @@ import { Context } from '@midwayjs/ws';
 import { AsteroidService } from '../service/asteroid.service';
 import { IMessage, IRes } from '../types/common.types'
 import { WS_ACTION, WS_TYPE } from '../types/common.enums'
+import { EventService } from '../service/event.service';
 
 
 @WSController()
@@ -13,10 +14,22 @@ export class MinerSocketController {
     @Inject()
     asteroidService: AsteroidService;
 
+    @Inject()
+    eventSrv: EventService
+
     @OnWSMessage(WS_TYPE.ASTEROID)
     @WSEmit('data')
     async gotMessage(message: IMessage) {
         let res: IRes = { type: WS_TYPE.ASTEROID, success: true }
+
+        this.eventSrv.eventEmitter.on('newSimData', (data) => {
+            this.ctx.emit('data', {
+                type: WS_TYPE.ASTEROID,
+                action: WS_ACTION.NEW_SIM_DATA,
+                data: data
+            })
+        })
+
         try {
             console.log('asteroid')
             res = { ...res, ...message }

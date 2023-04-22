@@ -5,6 +5,7 @@ import { ASTEROID_STATUS, MINER_STATUS } from "../types/common.enums";
 import { PlanetService } from "../service/planet.service";
 import { AsteroidService } from "../service/asteroid.service";
 import { planets, miners, asteroids } from '../data/test.data'
+import { MinerHistoryService } from "../service/minerHistory.service";
 
 
 @Provide()
@@ -19,11 +20,15 @@ export class InitJob {
     @Inject()
     asteroidService: AsteroidService;
 
+    @Inject()
+    mineHistoryService: MinerHistoryService;
+
     async initDB() {
         await Promise.all([
             this.minerService.drop(),
             this.planetService.drop(),
-            this.asteroidService.drop()
+            this.asteroidService.drop(),
+            this.mineHistoryService.drop()
         ])
         const asteroidData = asteroids.map(asteroid => ({
             ...asteroid,

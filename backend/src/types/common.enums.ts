@@ -5,6 +5,7 @@ export enum WS_ACTION {
     UPDATE = 'update',
     DELETE = 'delete',
     SPAWN_MINER = 'spawnMiner',
+    NEW_SIM_DATA = 'newSimData'
 }
 
 export enum WS_TYPE {

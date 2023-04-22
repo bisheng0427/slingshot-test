@@ -3,6 +3,7 @@ import { Context } from '@midwayjs/ws';
 import { PlanetService } from '../service/planet.service';
 import { IMessage, IRes } from '../types/common.types'
 import { WS_ACTION, WS_TYPE } from '../types/common.enums'
+import { EventService } from '../service/event.service';
 
 @WSController()
 export class PlanetSocketController {
@@ -12,13 +13,25 @@ export class PlanetSocketController {
     @Inject()
     planetService: PlanetService;
 
+    @Inject()
+    eventSrv: EventService
+
+
     @OnWSMessage('planet')
     @WSEmit('data')
     async gotMessage(message: IMessage) {
         let res: IRes = { type: WS_TYPE.PLANET, success: true }
+
+        this.eventSrv.eventEmitter.on('newSimData', (data) => {
+            this.ctx.emit('data', {
+                type: WS_TYPE.PLANET,
+                action: WS_ACTION.NEW_SIM_DATA,
+                data: data
+            })
+        })
+
         try {
             res = { ...res, ...message }
-            console.log('planet message', message)
 
             // process different socket actions
             switch (message.action) {
@@ -30,9 +43,9 @@ export class PlanetSocketController {
                     break;
                 case WS_ACTION.SPAWN_MINER:
                     const miner = await this.planetService.spawnMiner(message.payload.planetId, message.payload)
-                    if (!miner) {
+                    if (miner.failed) {
                         res.success = false
-                        res.message = 'mineral is not enough'
+                        res.message = miner.message
                     } else {
                         res.data = miner
                     }

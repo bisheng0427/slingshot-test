@@ -21,8 +21,16 @@ const AsteroidList = () => {
 
 	useEffect(() => {
 		if (val && val.type === 'asteroid' && val.action === 'getList') {
-			console.log('val', val.data)
 			setList(val.data)
+		} else if (val && val.action === 'newSimData') {
+			const asteroids = val.data.asteroids.map(asteroid => {
+				const miners = val.data.miners.filter(miner => miner.targetAsteroidId === asteroid._id && miner.status === 2)
+				return {
+					...asteroid,
+					miners: miners
+				}
+			})
+			setList(asteroids)
 		}
 	}, [val])
 
@@ -43,7 +51,7 @@ const AsteroidList = () => {
 						<tr key={item._id}>
 							<td>{item.name}</td>
 							<td className={item.curMinerals === 0 ? "red" : ""}>{item.curMinerals}/{item.minerals}</td>
-							<td>{item.miner || "-"}</td>
+							<td>{item.miners?.length || "-"}</td>
 							<td>{item.position.x},{item.position.y}</td>
 						</tr>
 					))

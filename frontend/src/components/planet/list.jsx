@@ -21,7 +21,7 @@ const PlanetList = () => {
 	useEffect(() => {
 		if (ready) {
 			emit('planet', {
-				action: 'getList'
+				action: 'getList',
 			})
 			setLoading(true)
 		}
@@ -29,12 +29,18 @@ const PlanetList = () => {
 	}, [ready]);
 
 	useEffect(() => {
-		if (val) {
+		if (val && val.type === 'planet' && val.action === 'getList') {
 			setLoading(false)
-			if (val.type === 'planet' && val.action === 'getList') {
-				setPlanets(val.data)
-				console.log('data', val.data)
-			}
+			setPlanets(val.data)
+		} else if (val && val.action === 'newSimData') {
+			const planets = val.data.planets.map(planet => {
+				const miners = val.data.miners.filter(miner => miner.planetId === planet.id)
+				return {
+					...planet,
+					miners: miners
+				}
+			})
+			setPlanets(planets)
 		}
 	}, [val])
 
@@ -67,8 +73,8 @@ const PlanetList = () => {
 						onClick={() => showPopup(planet.id)}
 					>
 						<td>{planet.name}</td>
-						<td>{planet.miners.length}</td>
-						<td>{planet.mineral || 0}/1000</td>
+						<td>{planet.miners?.length}</td>
+						<td>{planet.minerals}/1000</td>
 						<td>{planet.position.x},{planet.position.y}</td>
 						<td><div className="icon-addminer" onClick={() => showForm(planet.id)}>Create a miner</div></td>
 					</tr>

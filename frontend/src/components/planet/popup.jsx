@@ -2,58 +2,80 @@
  * Planet popup
  */
 
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { WebsocketContext } from '../../context/websocket';
 
-class PlanetPopup extends React.Component {
-	constructor(props) {
-		super(props)
-	}
+const PlanetPopup = (props) => {
+	const { planetId } = props
+	const [ready, val, emit] = useContext(WebsocketContext);
+	const [list, setList] = useState([])
 
-	render() {
-		return <div className="scrollable">
-			<table>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Carry capacity</th>
-						<th>Travel speed</th>
-						<th>Mining speed</th>
-						<th>Position (x, y)</th>
-						<th>Status</th>
-					</tr>
-				</thead>
+	useEffect(() => {
+		if (ready) {
+			emit('miner', {
+				action: 'getList',
+				payload: {
+					planetId: planetId
+				}
+			})
+		}
 
-				<tbody>
-					<tr>
-						<td>Miner 1</td>
-						<td>0/120</td>
-						<td>60</td>
-						<td>20</td>
-						<td>832, 635</td>
-						<td>Mining</td>
-					</tr>
+	}, [ready]);
 
-					<tr>
-						<td>Miner 2</td>
-						<td>16/120</td>
-						<td>200</td>
-						<td>45</td>
-						<td>32, 205</td>
-						<td>Traveling</td>
-					</tr>
+	useEffect(() => {
+		if (val && val.type === 'miner' && val.action === 'getList') {
+			const miners = val.data.filter(d => d.planetId === planetId)
+			setList(miners)
+		} else if (val && val.action === 'newSimData') {
+			const miners = val.data.miners.filter(d => d.planetId === planetId)
+			setList(miners)
+		}
+	}, [val])
 
-					<tr>
-						<td>Miner 3</td>
-						<td className="green">120/120</td>
-						<td>87</td>
-						<td>166</td>
-						<td>333, 123</td>
-						<td>Transferring</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	}
+	return <div className="scrollable">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Carry capacity</th>
+					<th>Travel speed</th>
+					<th>Mining speed</th>
+					<th>Position (x, y)</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{
+					list.map(item => {
+						switch (item.status) {
+							case 0:
+								item.status = 'Idle'
+								break;
+							case 1:
+								item.status = 'Travelling'
+								break;
+							case 2:
+								item.status = 'Mining'
+								break;
+							case 3:
+								item.status = 'Transfering minerals to planet'
+						}
+						return (
+							<tr key={item.id}>
+								<td>{item.name}</td>
+								<td>{item.carryCapacity}</td>
+								<td>{item.travelSpeed}</td>
+								<td>{item.miningSpeed}</td>
+								<td>{item.position.x}, {item.position.y}</td>
+								<td>{item.status}</td>
+							</tr>
+						)
+					})
+				}
+			</tbody>
+		</table>
+	</div>
 }
 
 export default PlanetPopup

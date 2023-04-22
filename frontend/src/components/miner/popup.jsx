@@ -19,7 +19,7 @@ const MinerPopup = (props) => {
 		if (ready && minerId > 0) {
 			emit('minerHistory', {
 				action: 'getList',
-				payLoad: {
+				payload: {
 					minerId
 				}
 			})
@@ -42,31 +42,23 @@ const MinerPopup = (props) => {
 		<table>
 			<thead>
 				<tr>
-					<th>Date</th>
 					<th>Year</th>
-					<th>Planet</th>
-					<th>Carry capacity</th>
-					<th>Travel speed</th>
-					<th>Mining speed</th>
 					<th>Position (x, y)</th>
+					<th>Action</th>
 					<th>Status</th>
 				</tr>
 			</thead>
 
 			<tbody>
 				{/* {loading && <Loader />} */}
-				{/* {list.map((item) => (
+				{list.map((item) => (
 					<tr key={item.id}>
-						<td>{item.date}</td>
 						<td>{item.year}</td>
-						<td>{item.planet}</td>
-						<td>{item.carryCapacity}</td>
-						<td>{item.travelSpeed}</td>
-						<td>{item.miningSpeed}</td>
 						<td>{item.position.x}, {item.position.y}</td>
+						<td>{item.action}</td>
 						<td>{item.status}</td>
 					</tr>
-				))} */}
+				))}
 
 			</tbody>
 		</table>
