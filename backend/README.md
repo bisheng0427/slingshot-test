@@ -1,29 +1,13 @@
-# my_midway_project
+# backend
+
+## Intro
+1. websocket controller files are located in ./src/controller
+2. data initialization job and simulation job are located in ./src/jobs
 
 ## QuickStart
 
-<!-- add docs here for user -->
+1. run `npm install`
 
-see [midway docs][midway] for more detail.
+2. modify mongodb config in ./src/config/config.default.js
 
-### Development
-
-```bash
-$ npm i
-$ npm run dev
-$ open http://localhost:7001/
-```
-
-### Deploy
-
-```bash
-$ npm start
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-
-
-[midway]: https://midwayjs.org
+3. run `npm run dev`
