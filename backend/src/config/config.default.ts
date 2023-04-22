@@ -14,17 +14,23 @@ export default {
   mongoose: {
     dataSource: {
       default: {
-        uri: '',
+        // uri: 'mongodb+srv://betabb:bs270017@cluster0.gft3bo1.mongodb.net/?retryWrites=true&w=majority',
+        uri: 'mongodb://localhost:27017/test',
         options: {
           useNewUrlParser: true,
           useUnifiedTopology: true,
+          user: '***********',
+          pass: '***********'
         },
         // 关联实体
         entities: [Planet, Asteroid, Miner, MinerHistory],
       },
     },
   },
-  cors: {
-    credentials: false,
-  },
+  socketIO: {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+    }
+  }
 } as MidwayConfig;
