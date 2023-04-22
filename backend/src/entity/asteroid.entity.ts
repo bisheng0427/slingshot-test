@@ -2,7 +2,7 @@ import { prop } from '@typegoose/typegoose';
 import { Position } from './position.entity';
 
 export class Asteroid {
-  @prop({ type: () => Position })
+  @prop({ _id: false, type: () => Position })
   public position: Position;
 
   @prop()
@@ -15,5 +15,5 @@ export class Asteroid {
   public minerals: number;
 
   @prop()
-  public isValid: boolean;
+  public curMinerals: number;
 }

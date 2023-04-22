@@ -3,6 +3,7 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Planet } from '../entity/planet.entity';
 import { Miner } from '../entity/miner.entity';
+import { startSession } from 'mongoose';
 
 @Provide()
 export class PlanetService {
@@ -14,6 +15,10 @@ export class PlanetService {
 
   async create(params: Planet) {
     return await this.planetModel.create(params as Planet);
+  }
+
+  async bulkCreate(params: Planet[]) {
+    return await this.planetModel.insertMany(params)
   }
 
   async findOne(params: Planet) {
@@ -39,8 +44,24 @@ export class PlanetService {
 
   async spawnMiner(planetId: number, params: Miner) {
     const planet = await this.planetModel.findOne({ id: planetId }).exec()
-    if (planet.mineral < 1000) return false
-    const miner = await this.minerModel.create(params)
-    return miner
+    if (planet.minerals < 1000) return false
+    const session = await startSession();
+    session.startTransaction();
+    try {
+      const miner = await this.minerModel.create(params)
+      await this.planetModel.updateOne({ id: planetId }, { mineral: planet.minerals - 1000 })
+      session.commitTransaction;
+      session.endSession()
+      return miner
+    } catch (error) {
+      session.abortTransaction()
+      session.endSession()
+      return error
+    }
+
+  }
+
+  async drop() {
+    return await this.planetModel.deleteMany()
   }
 }

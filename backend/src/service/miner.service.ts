@@ -2,6 +2,7 @@ import { Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Miner } from '../entity/miner.entity';
+import { FilterQuery } from 'mongoose';
 
 @Provide()
 export class MinerService {
@@ -12,8 +13,12 @@ export class MinerService {
     return await this.minerModel.create(params as Miner);
   }
 
-  async getList() {
-    return await this.minerModel.find().exec();
+  async bulkCreate(params: Miner[]) {
+    return await this.minerModel.insertMany(params)
+  }
+
+  async getList(params: FilterQuery<Miner>) {
+    return await this.minerModel.find(params).exec();
   }
 
   async findOne(params: Miner) {
@@ -31,5 +36,9 @@ export class MinerService {
       },
       params
     );
+  }
+
+  async drop() {
+    return await this.minerModel.deleteMany()
   }
 }

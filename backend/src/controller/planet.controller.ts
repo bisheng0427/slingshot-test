@@ -1,8 +1,8 @@
-import { WSController, OnWSMessage, Inject, OnWSDisConnection } from '@midwayjs/core';
+import { WSController, OnWSMessage, Inject, OnWSDisConnection, WSEmit } from '@midwayjs/core';
 import { Context } from '@midwayjs/ws';
-import { PlanetService } from '../service/planet.entity';
+import { PlanetService } from '../service/planet.service';
 import { IMessage, IRes } from '../types/common.types'
-import { WS_ACTION } from '../types/common.enums'
+import { WS_ACTION, WS_TYPE } from '../types/common.enums'
 
 @WSController()
 export class PlanetSocketController {
@@ -12,12 +12,11 @@ export class PlanetSocketController {
     @Inject()
     planetService: PlanetService;
 
-    @OnWSMessage('message')
-    async gotMessage(data: Buffer) {
-        let res: IRes = { success: true }
+    @OnWSMessage('planet')
+    @WSEmit('data')
+    async gotMessage(message: IMessage) {
+        let res: IRes = { type: WS_TYPE.PLANET, success: true }
         try {
-            const message: IMessage = JSON.parse(Buffer.from(data).toString('utf-8'))
-            if (message.type !== 'planet') return
             res = { ...res, ...message }
             console.log('planet message', message)
 

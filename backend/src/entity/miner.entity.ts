@@ -2,7 +2,7 @@ import { prop } from '@typegoose/typegoose';
 import { Position } from './position.entity';
 
 export class Miner {
-  @prop({ type: () => Position })
+  @prop({ _id: false, type: () => Position })
   public position: Position;
 
   @prop()
@@ -12,7 +12,13 @@ export class Miner {
   public planetId: number;
 
   @prop()
+  public targetAsteroidId: string;
+
+  @prop()
   public carryCapacity: number;
+
+  @prop()
+  public curCarry: number;
 
   @prop()
   public travelSpeed: number;
@@ -22,7 +28,4 @@ export class Miner {
 
   @prop()
   public status: number;
-
-  @prop()
-  public isValid: boolean;
 }

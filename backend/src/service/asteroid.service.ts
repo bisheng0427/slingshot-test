@@ -12,6 +12,10 @@ export class AsteroidService {
     return await this.asteroidModel.create(params as Asteroid);
   }
 
+  async bulkCreate(params: Asteroid[]) {
+    return await this.asteroidModel.insertMany(params)
+  }
+
   async getList() {
     return await this.asteroidModel.find().exec();
   }
@@ -24,12 +28,14 @@ export class AsteroidService {
       .exec();
   }
 
-  async update(id: number, params: Asteroid) {
-    return await this.asteroidModel.updateOne(
-      {
-        id,
-      },
+  async update(_id: string, params: Asteroid) {
+    return await this.asteroidModel.findByIdAndUpdate(
+      _id,
       params
     );
+  }
+
+  async drop() {
+    return await this.asteroidModel.deleteMany()
   }
 }

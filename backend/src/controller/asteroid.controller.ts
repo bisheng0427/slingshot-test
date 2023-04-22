@@ -1,8 +1,8 @@
-import { WSController, OnWSMessage, Inject, OnWSDisConnection } from '@midwayjs/core';
+import { WSController, OnWSMessage, Inject, OnWSDisConnection, WSEmit } from '@midwayjs/core';
 import { Context } from '@midwayjs/ws';
-import { MinerService } from '../service/miner.service';
+import { AsteroidService } from '../service/asteroid.service';
 import { IMessage, IRes } from '../types/common.types'
-import { WS_ACTION } from '../types/common.enums'
+import { WS_ACTION, WS_TYPE } from '../types/common.enums'
 
 
 @WSController()
@@ -11,21 +11,19 @@ export class MinerSocketController {
     ctx: Context;
 
     @Inject()
-    minerService: MinerService;
+    asteroidService: AsteroidService;
 
-    @OnWSMessage('message')
-    async gotMessage(data: Buffer) {
-        let res: IRes = { success: true }
+    @OnWSMessage(WS_TYPE.ASTEROID)
+    @WSEmit('data')
+    async gotMessage(message: IMessage) {
+        let res: IRes = { type: WS_TYPE.ASTEROID, success: true }
         try {
-            const message: IMessage = JSON.parse(Buffer.from(data).toString('utf-8'))
-            if (message.type !== 'miner') return
+            console.log('asteroid')
             res = { ...res, ...message }
-            console.log('mienr message', message)
-
 
             switch (message.action) {
                 case WS_ACTION.GET_LIST:
-                    res.data = await this.minerService.getList()
+                    res.data = await this.asteroidService.getList()
                     break;
                 default:
                     break;

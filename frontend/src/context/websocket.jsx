@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 
-
-export const WebsocketContext = createContext([false, null, () => {}]);
+export const WebsocketContext = createContext([false, null, () => { }]);
 
 
 // Make sure to put WebsocketProvider higher up in
@@ -13,17 +13,20 @@ export const WebsocketProvider = ({ children }) => {
   const ws = useRef(null);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:7001");
+    const socket = io("ws://localhost:7001");
+    socket.on("connect", () => {
+      console.log('ws ready')
+      setIsReady(true);
+    })
 
-    socket.onopen = () => {
-        console.log('ws ready')
-        setIsReady(true);
-    }
-    socket.onclose = () => {
-        console.log('ws close')
-        setIsReady(false);
-    }
-    socket.onmessage = (event) => setVal(event.data);
+    socket.on("disconnect", () => {
+      console.log('ws close')
+      setIsReady(false);
+    });
+
+    socket.on("data", (data) => {
+      setVal(data);
+    })
 
     ws.current = socket;
 
@@ -32,7 +35,7 @@ export const WebsocketProvider = ({ children }) => {
     };
   }, []);
 
-  const ret = [isReady, val, ws.current?.send.bind(ws.current)];
+  const ret = [isReady, val, ws.current?.emit.bind(ws.current)];
   return (
     <WebsocketContext.Provider value={ret}>
       {children}

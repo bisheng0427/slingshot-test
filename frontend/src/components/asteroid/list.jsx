@@ -3,63 +3,54 @@
  */
 
 import React from 'react'
+import { useContext, useState, useEffect } from 'react';
+import { WebsocketContext } from '../../context/websocket';
 
-class AsteroidList extends React.Component {
-	constructor(props) {
-		super(props)
-	}
+const AsteroidList = () => {
+	const [ready, val, emit] = useContext(WebsocketContext);
+	const [list, setList] = useState([])
 
-	render() {
-		return <div className="list">
-			<table>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Minerals</th>
-						<th>Current miner</th>
-						<th>Position (x, y)</th>
-					</tr>
-				</thead>
+	useEffect(() => {
+		if (ready) {
+			emit('asteroid', {
+				action: 'getList'
+			})
+		}
 
-				<tbody>
-					<tr>
-						<td>Asteroid 1</td>
-						<td>758/963</td>
-						<td>Miner 1</td>
-						<td>832, 635</td>
-					</tr>
+	}, [ready]);
 
-					<tr>
-						<td>Asteroid 2</td>
-						<td className="red">0/879</td>
-						<td>-</td>
-						<td>759, 118</td>
-					</tr>
+	useEffect(() => {
+		if (val && val.type === 'asteroid' && val.action === 'getList') {
+			console.log('val', val.data)
+			setList(val.data)
+		}
+	}, [val])
 
-					<tr>
-						<td>Asteroid 3</td>
-						<td>915/1157</td>
-						<td>Miner 2</td>
-						<td>216, 492</td>
-					</tr>
+	return <div className="list">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Minerals</th>
+					<th>Current miner</th>
+					<th>Position (x, y)</th>
+				</tr>
+			</thead>
 
-					<tr>
-						<td>Asteroid 4</td>
-						<td>2/989</td>
-						<td>Miner 4</td>
-						<td>564, 349</td>
-					</tr>
-
-					<tr>
-						<td>Asteroid 5</td>
-						<td>702/905</td>
-						<td>-</td>
-						<td>255, 255</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	}
+			<tbody>
+				{
+					list.map((item) => (
+						<tr key={item._id}>
+							<td>{item.name}</td>
+							<td className={item.curMinerals === 0 ? "red" : ""}>{item.curMinerals}/{item.minerals}</td>
+							<td>{item.miner || "-"}</td>
+							<td>{item.position.x},{item.position.y}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
 }
 
 export default AsteroidList
